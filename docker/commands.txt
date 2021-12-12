@@ -1,0 +1,51 @@
+git clone https://github.com/Azure-Samples/aci-helloworld.git
+
+docker build ./aci-helloworld -t aci-tutorial-app
+
+docker images
+
+docker run -d -p 8080:80 aci-tutorial-app
+
+docker container ls -a
+
+=================================================================================
+
+az group create -l eastus -n MyRG
+
+az acr create --resource-group myRG --name myacr$random --sku Basic
+
+az acr login --name <acrName>
+
+# Obtain the full login server name of the Container Registry instance
+az acr list --resource-group myRG --query "[].{acrLoginServer:loginServer}" --output table
+
+#############Push Images to Azure ACR 
+
+# Tag image with full login server name prefix
+docker tag aci-tutorial-app <acrLoginServer>/aci-tutorial-app:v1
+
+# Push image to Container Registry
+docker push <acrLoginServer>/aci-tutorial-app:v1
+
+# List container images
+az acr repository list --name <acrName> --output table
+
+# List the tags on the aci-helloworld repository
+az acr repository show-tags --name <acrName> --repository aci-tutorial-app --output table
+
+#########Deploy an image to Container Instance by using Azure CLI
+
+# Enable admin user
+az acr update --name <acrName> --admin-enabled true
+
+# Query for the password
+az acr credential show --name <acrName> --query "passwords[0].value"
+
+# Deploy container image
+az container create --resource-group <group> --name acr-quickstart --image <acrLoginServer>/aci-helloworld:v1 --cpu 1 --memory 1 --registry-username <acrName> --registry-password <acrPassword> --dns-name-label <fqdn> --ports 80
+#az container create --resource-group myRG --name acr-cont --image myacr2758.azurecr.io/aci-tutorial-app:v1 --cpu 1 --memory 1 --registry-username myacr2758 --registry-password "Sc=c0DCzedY4SYgIXWP+Yys7tVDb35iv" --dns-name-label uniquefdn --ports 80
+
+# View container FQDN
+az container show --resource-group myResourceGroup --name acr-quickstart --query instanceView.state
+
+az container show --resource-group myRG --name acr-cont --query instanceView.state

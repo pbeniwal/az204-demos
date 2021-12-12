@@ -1,0 +1,48 @@
+# Command to Create Azure Resource Group using ARM Template
+
+az deployment sub create --location eastus --template-file .\rg.json
+
+# Command to Create Azure Storage account using ARM Template
+
+az deployment group create --resource-group <mycliRG> --template-file .\azuredeploy.json
+
+# Cloud Formation Create Stack
+
+aws cloudformation create-stack --stack-name myteststack --template-body  file://C:\Users\beniwal\Documents\ARM\s3.json
+
+# Powershell Command to create rg and VM after connecting to AzAccount
+
+Connect-AzAccount
+
+New-AzResourceGroup -Name "myResourceGroup" -Location EastUS
+
+New-AzVM `
+    -ResourceGroupName "myResourceGroup" `
+    -Name "myVM" `
+    -Location "East US" `
+    -VirtualNetworkName "myVnet" `
+    -SubnetName "mySubnet" `
+    -SecurityGroupName "myNetworkSecurityGroup" `
+    -PublicIpAddressName "myPublicIpAddress" `
+    -OpenPorts 80,3389
+
+# Create a VM using Azure cloudformation
+az login
+
+az group create --name "myResourceGroup" --location "eastus"
+
+az vm create --name "myVMname" `
+    --resource-group "myResourceGroup2" `
+    --location "eastus" `
+    --vnet-name "myVnet" `
+    --subnet "mySubnet" `
+    --nsg "myNetworkSecurityGroup" `
+    --public-ip-address "myPublicIpAddress" `
+    --image "ubuntults" `
+    --public-ip-sku "Standard" `
+    --admin-username "beniwal"
+    --admin-username "beniwal"
+
+az vm open-port --name "myVMname" `
+    --resource-group "myResourceGroup" `
+    --port "22"

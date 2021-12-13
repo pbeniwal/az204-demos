@@ -1,0 +1,73 @@
+mkdir az204-auth
+
+cd az204-auth
+
+dotnet new console
+
+dotnet add package Microsoft.Identity.Client
+
+# Add below lines to Program.cs file
+
+using System.Threading.Tasks;
+using Microsoft.Identity.Client;
+
+# CHange main to asynch
+
+public static asyn Task Main(string[] args)
+
+# Add below text to Program class
+
+private const string _clientId = "APPLICATION_CLIENT_ID";
+private const string _tenantId = "DIRECTORY_TENANT_ID";
+
+# Add below code to main function
+
+# Use the PublicClientApplicationBuilder class to build out the authorization context.
+
+var app = PublicClientApplicationBuilder
+                        .Create(_clientId)
+                        .WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)
+                        .WithRedirectUri("http://localhost")
+                        .Build();
+
+# Set the permission scope for the token request. Add the following code below the PublicClientApplicationBuilder.
+
+string[] scopes = { "user.read" };
+
+# Add code to request the token and write the result out to the console.
+
+AuthenticationResult result = await app.AcquireTokenInteractive(scopes).ExecuteAsync();
+
+Console.WriteLine($"Token:\t{result.AccessToken}");
+
+==============================================================
+
+# Run the Program
+
+dotnet Run
+
+######################################################################
+
+dotnet add package Microsoft.Graph
+dotnet add package Microsoft.Graph.Auth --version 1.0.0-preview.7
+
+# Add below lines to Program.cs file
+
+using Microsoft.Graph;
+using Microsoft.Graph.Auth;
+
+# Comment the two line and instead add below lines
+
+
+            //AuthenticationResult result = await app.AcquireTokenInteractive(scopes).ExecuteAsync();
+
+            //Console.WriteLine($"Token:\t{result.AccessToken}");
+            
+var provider = new InteractiveAuthenticationProvider(app, scopes);
+
+var client = new GraphServiceClient(provider);
+
+User me = await client.Me.Request().GetAsync();
+
+Console.WriteLine($"Display Name:\t{me.DisplayName}");
+

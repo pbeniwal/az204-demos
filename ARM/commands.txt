@@ -26,13 +26,13 @@ New-AzVM `
     -PublicIpAddressName "myPublicIpAddress" `
     -OpenPorts 80,3389
 
-# Create a VM using Azure cloudformation
+# Create a VM using Azure CLI
 az login
 
 az group create --name "myResourceGroup" --location "eastus"
 
-az vm create --name "myVMname" `
-    --resource-group "myResourceGroup2" `
+az vm create -n "myVMname" `
+    -g "myResourceGroup" `
     --location "eastus" `
     --vnet-name "myVnet" `
     --subnet "mySubnet" `
@@ -41,7 +41,7 @@ az vm create --name "myVMname" `
     --image "ubuntults" `
     --public-ip-sku "Standard" `
     --admin-username "beniwal"
-    --admin-username "beniwal"
+
 
 az vm open-port --name "myVMname" `
     --resource-group "myResourceGroup" `

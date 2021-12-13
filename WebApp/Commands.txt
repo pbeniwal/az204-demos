@@ -1,0 +1,33 @@
+# Create a static HTML web app by using Azure Cloud Shell
+
+git clone https://github.com/Azure-Samples/html-docs-hello-world.git
+
+cd html-docs-hello-world
+
+az webapp up --location 'eastus' --name web_app-1121weq --html
+
+az group delete --name <resource_group> --no-wait --yes
+
+
+====================================================================
+
+# Create a Web App with a local Git deployment source
+
+az group create --location eastus --name az204_rg_temp
+
+az appservice plan create --name az204_plan --resource-group az204_rg_temp
+
+az webapp create --name myuniqueapp1231 --resource-group az204_rg_temp --plan az204_plan --deployment-local-git
+
+az webapp deployment user set --user-name pb2929 --password "Password@123"
+
+az webapp deployment source config-local-git --name myuniqueapp1231 az webapp deployment source config-local-git --name
+
+git remote add azure <url>
+
+git push azure master
+
+az group delete --name az204_rg_temp --no-wait
+
+=====================================================================
+

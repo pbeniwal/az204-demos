@@ -4,7 +4,7 @@ git clone https://github.com/Azure-Samples/html-docs-hello-world.git
 
 cd html-docs-hello-world
 
-az webapp up --location 'eastus' --name web_app-1121weq --html
+az webapp up --location 'eastus' --name web-app-1121weq --html
 
 az group delete --name <resource_group> --no-wait --yes
 
@@ -19,9 +19,11 @@ az appservice plan create --name az204_plan --resource-group az204_rg_temp
 
 az webapp create --name myuniqueapp1231 --resource-group az204_rg_temp --plan az204_plan --deployment-local-git
 
-az webapp deployment user set --user-name pb2929 --password "Password@123"
+az webapp deployment user set --user-name az29 --password "Password@123"
 
-az webapp deployment source config-local-git --name myuniqueapp1231 az webapp deployment source config-local-git --name
+a#z webapp deployment source config-local-git --name myuniqueapp1231 
+
+#az webapp deployment source config-local-git --name
 
 git remote add azure <url>
 
@@ -31,3 +33,53 @@ az group delete --name az204_rg_temp --no-wait
 
 =====================================================================
 
+# Creating webapp through Azure CLI
+
+# generate a unique name and store as a shell variable
+webappname=mywebapp$RANDOM
+
+# create a resource group
+az group create --location eastus --name myResourceGroup
+
+# create an App Service plan
+az appservice plan create --name $webappname --resource-group myResourceGroup --sku FREE
+
+# create a Web App
+az webapp create --name $webappname --resource-group myResourceGroup --plan $webappname
+
+# store a repository url as a shell variable
+gitrepo=https://github.com/Azure-Samples/php-docs-hello-world
+
+# deploy code from a Git repository
+az webapp deployment source config --name $webappname --resource-group myResourceGroup --repo-url $gitrepo --branch master --manual-integration
+
+# print out the FQDN for the Web App
+echo http://$webappname.azurewebsites.net
+
+====================================================================================
+# Creating webapp through Powershell
+
+# Create variables for the repository URL, Web App name and location
+$gitrepo="https://github.com/Azure-Samples/app-service-web-dotnet-get-started.git"
+
+$webappname="mywebapp$(Get-Random)"
+
+$location="eastus"
+
+# Create new resource group
+New-AzResourceGroup -Name myResourceGroup -Location $location
+
+# Create new App Service plan
+New-AzAppServicePlan -Name $webappname -Location $location -ResourceGroupName myResourceGroup -Tier Free
+
+# Create new Web App
+New-AzWebApp -Name $webappname -Location $location -AppServicePlan $webappname -ResourceGroupName myResourceGroup
+
+# Create deployment resource manually using ARM
+$PropertiesObject = @{
+    repoUrl = "$gitrepo";
+    branch = "master";
+    isManualIntegration = "true";
+}
+
+Set-AzResource -PropertyObject $PropertiesObject -ResourceGroupName myResourceGroup -ResourceType Microsoft.Web/sites/sourcecontrols -ResourceName $webappname/web -ApiVersion 2015-08-01 -Force

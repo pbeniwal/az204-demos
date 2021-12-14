@@ -1,11 +1,11 @@
-az group create --location <myLocation> --name az204-cosmos-rg
+az group create --location eastus --name az204-cosmos-rg
 
 
-az cosmosdb create --name <myCosmosDBacct> --resource-group az204-cosmos-rg
+az cosmosdb create --name mycosmdbfordemocli --resource-group az204-cosmos-rg
 
 # Retrieve the Primary Key
 
-az cosmosdb keys list --name <myCosmosDBacct> --resource-group az204-cosmos-rg
+az cosmosdb keys list --name mycosmdbfordemocli --resource-group az204-cosmos-rg
 
 # Create a folder for the project and change in to the folder.
 md az204-cosmos

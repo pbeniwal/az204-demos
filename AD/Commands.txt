@@ -44,7 +44,7 @@ Console.WriteLine($"Token:\t{result.AccessToken}");
 
 # Run the Program
 
-dotnet Run
+dotnet run
 
 ######################################################################
 

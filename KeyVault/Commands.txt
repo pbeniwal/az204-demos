@@ -1,0 +1,80 @@
+
+KeyVault with managed identity and Powershell on Linux VM
+1.	Create a Linux VM
+
+2.	Create new keyvault with unique name(take a note) and new secret as dbpassword
+
+myKeyVault=az204vault-$RANDOM 
+
+myLocation=eastus
+
+az group create --name az204-vault-rg --location $myLocation
+
+az keyvault create --name $myKeyVault --resource-group az204-vault-rg --location $myLocation
+
+az keyvault secret set --vault-name $myKeyVault --name "dbpassword" --value "mostsecretpassword"
+
+3.	Login into Linux VM and run below commands to install powershell:
+sudo apt update
+
+sudo apt install -y wget apt-transport-https software-properties-common
+
+wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+
+sudo dpkg -i packages-microsoft-prod.deb
+
+sudo apt update
+
+sudo add-apt-repository universe
+
+sudo apt install -y powershell jq
+
+pwsh
+
+sudo apt -y install jq
+
+
+--------------------------------------------------
+myKeyVault=az204vault-7244 
+
+curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true | awk -F"[{,\":}]" '{print $6}'
+
+token=$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true | awk -F"[{,\":}]" '{print $6}')
+
+curl -s "https://${myKeyVault}.vault.azure.net/secrets/dbpassword?api-version=2016-10-01" \
+    -H "Authorization: Bearer ${token}" | jq -r ".value"
+    
+--------------------------------------------------------
+
+
+curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://vault.azure.net" | jq
+
+4.	Try running below command in new session after updating Red highlighted values:
+$secretName="dbpassword"
+$vaultname="mykeyvault836"
+
+$URI = "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://vault.azure.net"
+$token = Invoke-RestMethod -Method GET -Uri $URI -Headers @{ 'Metadata' = 'true' }
+Invoke-RestMethod -Uri https://$vaultname.vault.azure.net/secrets/$secretName\?api-version=2016-10-01 -Method GET -Headers @{Authorization="Bearer $($token.access_token)"}
+
+And you would get error of no permission.
+5.	Next go to VM Identity option in settings:
+ 
+
+6.	Next go to Keyvault Setting and click “Access Policies”
+ 
+7.	Next choose appropriate permissions
+ 
+8.	Choose appropriate Virtual Machine Managed Identity service principal:
+ 
+9.	Click on Save:
+ 
+10.	Now try the powershell command again:
+pwsh
+$secretName="dbpassword"
+$vaultname="mykeyvault836"
+
+$token = Invoke-RestMethod -Method GET -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://vault.azure.net" -Headers @{ 'Metadata' = 'true' }
+Invoke-RestMethod -Uri https://$vaultname.vault.azure.net/secrets/$secretName\?api-version=2016-10-01 -Method GET -Headers @{Authorization="Bearer $($token.access_token)"}
+And you should be seeing the value of Secret in keyvault
+

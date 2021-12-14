@@ -13,7 +13,7 @@ using Microsoft.Identity.Client;
 
 # CHange main to asynch
 
-public static asyn Task Main(string[] args)
+public static async Task Main(string[] args)
 
 # Add below text to Program class
 

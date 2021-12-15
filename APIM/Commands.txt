@@ -1,0 +1,22 @@
+# Bash commands
+myApimName=az204-apim-$RANDOM
+myLocation=eastus
+myEmail=pbeniwal@yahoo.com
+
+# Powershell commands
+$myApimName="az204-apim-" + (Get-Random -maximum 10000)
+$myLocation="<myLocatio
+
+# Resource group create command
+az group create --name az204-apim-rg --location $myLocation
+
+# Command to create APi management Service
+az apim create -n $myApimName --location $myLocation --publisher-email $myEmail --resource-group az204-apim-rg --publisher-name AZ204-APIM-Demo --sku-name Consumption
+
+az apim create -n $myApimName `
+--location $myLocation `
+--publisher-email $myEmail `
+--resource-group az204-apim-rg `
+--publisher-name AZ204-APIM-Demo `
+--sku-name Consumption
+

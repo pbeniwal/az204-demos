@@ -8,9 +8,11 @@ myKeyVault=az204vault-$RANDOM
 
 myLocation=eastus
 
-az group create --name az204-vault-rg --location $myLocation
+myRG=az204-vault-demo-rg
 
-az keyvault create --name $myKeyVault --resource-group az204-vault-rg --location $myLocation
+az group create --name az204-vault-demo-rg --location $myLocation
+
+az keyvault create --name $myKeyVault --resource-group $myRG --location $myLocation
 
 az keyvault secret set --vault-name $myKeyVault --name "dbpassword" --value "mostsecretpassword"
 
@@ -35,7 +37,7 @@ sudo apt -y install jq
 
 
 --------------------------------------------------
-myKeyVault=az204vault-7244 
+myKeyVault=az204vault-3329
 
 curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true | awk -F"[{,\":}]" '{print $6}'
 

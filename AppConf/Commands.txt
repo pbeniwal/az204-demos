@@ -1,0 +1,42 @@
+# Create new App configuration and set a v alue as below
+
+myLocation=eastus
+
+myRG=az204-app-conf-demo-rg
+
+myappconf=appconf$RANDOM
+
+az group create --name $myRG --location $myLocation
+
+az appconfig create -g $myRG -n $myappconf -l $myLocation 
+
+az appconfig kv set -n $myappconf --key "Message"  --value "Hello from Prashant Beniwal" --yes 
+
+# Create new console application
+
+dotnet new console
+
+dotnet add package Microsoft.Extensions.Configuration.AzureAppConfiguration
+
+// Add below lines to Program.cs 
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+
+static void Main(string[] args)
+{
+    var builder = new ConfigurationBuilder();
+    builder.AddAzureAppConfiguration(Environment.GetEnvironmentVariable("ConnectionString"));
+
+    var config = builder.Build();
+    Console.WriteLine(config["Message"] ?? "Hello world!");
+}
+
+
+# Set environment variable in PowerShell
+
+$Env:ConnectionString = "connection-string-of-your-app-configuration-store"
+
+# Set env varibale for Azure CLI
+
+setx ConnectionString "connection-string-of-your-app-configuration-store"

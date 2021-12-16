@@ -1,0 +1,15 @@
+dotnet new console -n QueueApp
+
+cd QueueApp
+
+dotnet add package Azure.Storage.Queues
+
+using System.Threading.Tasks;
+using Azure.Storage.Queues;
+using Azure.Storage.Queues.Models;
+
+static async Task Main(string[] args)
+
+string connectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
+
+

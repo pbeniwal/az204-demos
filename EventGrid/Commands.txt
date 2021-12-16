@@ -5,18 +5,21 @@ myLocation=eastus
 myTopicName="az204-egtopic-${rNum}"
 mySiteName="az204-egsite-${rNum}"
 mySiteURL="https://${mySiteName}.azurewebsites.net"
+myRG=az204-demo-evgrid-rg
 
-az group create --name az204-evgrid-rg --location $myLocation
+# Createa A Azure Resource group
+
+az group create --name $myRG --location $myLocation
 
 az provider register --namespace Microsoft.EventGrid
 
 az provider show --namespace Microsoft.EventGrid --query "registrationState"
 
 # Create a custom myTopicName
-az eventgrid topic create --name $myTopicName --location $myLocation --resource-group az204-evgrid-rg
+az eventgrid topic create --name $myTopicName --location $myLocation --resource-group $myRG
 
 # Create a message Endpoint
-az deployment group create --resource-group az204-evgrid-rg \
+az deployment group create --resource-group $myRG \
 --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/main/azuredeploy.json" \
 --parameters siteName=$mySiteName hostingPlanName=viewerhost
 
@@ -27,15 +30,15 @@ endpoint="${mySiteURL}/api/updates"
 subId=$(az account show --subscription "" | jq -r '.id')
 
 az eventgrid event-subscription create \
---source-resource-id "/subscriptions/$subId/resourceGroups/az204-evgrid-rg/providers/Microsoft.EventGrid/topics/$myTopicName" \
+--source-resource-id "/subscriptions/$subId/resourceGroups/$myRG/providers/Microsoft.EventGrid/topics/$myTopicName" \
 --name az204ViewerSub \
 --endpoint $endpoint
 
 # Send an event to custom topic
 
-topicEndpoint=$(az eventgrid topic show --name $myTopicName -g az204-evgrid-rg --query "endpoint" --output tsv)
+topicEndpoint=$(az eventgrid topic show --name $myTopicName -g $myRG --query "endpoint" --output tsv)
 
-key=$(az eventgrid topic key list --name $myTopicName -g az204-evgrid-rg --query "key1" --output tsv)
+key=$(az eventgrid topic key list --name $myTopicName -g $myRG --query "key1" --output tsv)
 
 # Create a Event 
 

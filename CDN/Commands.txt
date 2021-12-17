@@ -1,0 +1,17 @@
+myRG=az204-redis-rg
+myLocation=eastus
+
+az group create --name $myRG --location $myLocation
+
+redisName=az204redis$RANDOM
+az redis create --location $myLocation \
+--resource-group $myRG \
+--name $redisName \
+--sku Basic --vm-size c0
+
+
+az cdn endpoint create \
+--name ContosoEndpoint \
+--origin www.contoso.com \
+--profile-name DemoProfile \
+--resource-group $myRG
